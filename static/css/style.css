@@ -50,6 +50,39 @@ body {
     flex-direction: column;
 }
 
+/* Contrast Overrides for Dark/Light Mode Readability */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--text-color) !important;
+}
+
+p, span, label, td, th, li {
+    color: var(--text-color);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.glass-card, .card {
+    color: var(--text-color) !important;
+}
+
+.form-label, .form-text {
+    color: var(--text-color) !important;
+}
+
+.form-text.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.upload-area h5 {
+    color: var(--text-color) !important;
+}
+
+.upload-area p {
+    color: var(--text-muted) !important;
+}
+
 main {
     flex: 1;
 }

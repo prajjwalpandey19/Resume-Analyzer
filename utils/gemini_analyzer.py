@@ -101,9 +101,10 @@ Job Description:
 ---
 """
 
-        # Using gemini-1.5-flash for general text analysis
+
+        # Using gemini-3.5-flash for general text analysis
         model = genai.GenerativeModel(
-            'gemini-1.5-flash',
+            'gemini-3.5-flash',
             generation_config={"response_mime_type": "application/json"}
         )
         

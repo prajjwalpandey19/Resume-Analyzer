@@ -22,9 +22,11 @@ def analyze_resume(resume_text, job_description=None):
         GeminiAnalysisError: If the API call fails or the response cannot be parsed.
     """
     api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
+    if not api_key or api_key.strip() == "YOUR_GEMINI_API_KEY_HERE":
         raise GeminiAnalysisError(
-            "Gemini API key is not configured. Please set the GEMINI_API_KEY environment variable."
+            "Gemini API key is not configured or is still set to the placeholder. "
+            "Please open the .env file in your project folder and replace 'YOUR_GEMINI_API_KEY_HERE' "
+            "with your real Google Gemini API key."
         )
         
     try:

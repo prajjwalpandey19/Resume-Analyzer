@@ -9,8 +9,9 @@ from utils.gemini_analyzer import analyze_resume, GeminiAnalysisError
 from utils.database_helper import init_db, save_analysis, get_all_analyses, get_analysis, delete_analysis
 from utils.pdf_generator import generate_pdf_report
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from absolute path
+dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "resume_analyzer_secret_key_12984")

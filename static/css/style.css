@@ -1,0 +1,241 @@
+/* Design System Tokens */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-rgb: 37, 99, 235;
+    
+    /* Light Theme (Default) */
+    --bg-color: #f8fafc;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(226, 232, 240, 0.8);
+    --glass-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --accent-success: #10b981;
+    --accent-warning: #f59e0b;
+    --accent-danger: #ef4444;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --highlight-bg: rgba(254, 240, 138, 0.6);
+}
+
+[data-theme="dark"] {
+    --primary-color: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-rgb: 59, 130, 246;
+    
+    /* Dark Theme */
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --card-border: rgba(51, 65, 85, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --accent-success: #34d399;
+    --accent-warning: #fbbf24;
+    --accent-danger: #f87171;
+    --input-bg: #1e293b;
+    --input-border: #475569;
+    --highlight-bg: rgba(133, 77, 14, 0.5);
+}
+
+/* Global Transitions */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Hero Section Gradients */
+.hero-gradient {
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-radius: 1.5rem;
+    border: 1px solid var(--card-border);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    cursor: pointer;
+    font-size: 1.25rem;
+    border: none;
+    background: none;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+/* File Upload Drag & Drop Area */
+.upload-area {
+    border: 2px dashed var(--input-border);
+    border-radius: 1rem;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(var(--primary-rgb), 0.02);
+    transition: all 0.2s ease;
+}
+
+.upload-area.dragover {
+    border-color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.08);
+    transform: scale(1.02);
+}
+
+.upload-area i {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Spinner Overlay for Loading */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+}
+
+/* Circular Score Indicators */
+.score-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.score-circle svg {
+    width: 150px;
+    height: 150px;
+    transform: rotate(-90deg);
+}
+
+.score-circle circle {
+    fill: none;
+    stroke-width: 10;
+}
+
+.score-circle .bg-ring {
+    stroke: var(--card-border);
+}
+
+.score-circle .progress-ring {
+    stroke: var(--primary-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.score-circle .score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.score-circle .score-label {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Resume Text Highlighter styling */
+.highlight-container {
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    color: var(--text-color);
+}
+
+mark.keyword-match {
+    background-color: rgba(16, 185, 129, 0.25);
+    color: var(--accent-success);
+    border-bottom: 2px solid var(--accent-success);
+    font-weight: bold;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+}
+
+mark.keyword-missing {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--accent-danger);
+    text-decoration: line-through;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+}
+
+/* Bootstrap Overrides for Forms and Table */
+.form-control, .form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+}
+
+.table {
+    color: var(--text-color);
+}
+
+.table th {
+    border-top: none;
+    background-color: rgba(var(--primary-rgb), 0.05);
+    color: var(--text-color);
+}
+
+/* Footer Styling */
+footer {
+    border-top: 1px solid var(--card-border);
+    background: var(--card-bg);
+}

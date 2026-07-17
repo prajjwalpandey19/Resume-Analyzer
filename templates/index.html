@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}AI Resume Analyzer - Analyze & Match Resumes{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-5 py-4 hero-gradient px-4">
+    <div class="col-lg-7">
+        <h1 class="display-4 fw-extrabold text-gradient mb-3" style="background: linear-gradient(90deg, var(--primary-color), var(--accent-success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Optimize Your Resume with Gemini AI
+        </h1>
+        <p class="lead text-muted mb-4">
+            Evaluate your resume instantly against standard Applicant Tracking Systems (ATS) or compare it with a specific job description to discover matching skills, missing keywords, and actionable suggestions.
+        </p>
+        <div class="d-flex gap-3">
+            <span class="badge bg-primary-subtle text-primary py-2 px-3 rounded-pill"><i class="fas fa-microchip me-1"></i> Gemini 1.5 Flash</span>
+            <span class="badge bg-success-subtle text-success py-2 px-3 rounded-pill"><i class="fas fa-shield-alt me-1"></i> Secure Uploads</span>
+            <span class="badge bg-info-subtle text-info py-2 px-3 rounded-pill"><i class="fas fa-file-pdf me-1"></i> PDF Parsing</span>
+        </div>
+    </div>
+    <div class="col-lg-5 text-center d-none d-lg-block">
+        <i class="fas fa-laptop-code text-primary" style="font-size: 8rem; opacity: 0.15;"></i>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card glass-card p-4 p-md-5 mb-5">
+            <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data" id="analyzer-form">
+                
+                <!-- Resume File Upload Section -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold fs-5 mb-3"><i class="fas fa-cloud-upload-alt text-primary me-2"></i>Upload Resume</label>
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-file-pdf fa-3x"></i>
+                        <h5 class="fw-bold mt-2">Drag and drop your resume here</h5>
+                        <p class="text-muted small mb-3">or click to browse your files (Only PDF supported, Max 10MB)</p>
+                        <input type="file" name="resume" id="resume-file" class="d-none" accept=".pdf" required>
+                        <div id="file-info"></div>
+                    </div>
+                </div>
+
+                <!-- Job Description Input Section -->
+                <div class="mb-4">
+                    <label for="job-description" class="form-label fw-bold fs-5 mb-3">
+                        <i class="fas fa-briefcase text-primary me-2"></i>Job Description <span class="text-muted font-monospace fw-normal">(Optional)</span>
+                    </label>
+                    <textarea class="form-control" name="job_description" id="job-description" rows="6" 
+                              placeholder="Paste the target Job Description here to get detailed ATS matching insights, matching vs missing skills, and specialized recommendation keywords..."></textarea>
+                    <div class="form-text text-muted">
+                        Providing a Job Description enables tailored matching analysis and calculates your overall Job Match %.
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm">
+                        <i class="fas fa-magic me-2"></i> Start AI Analysis
+                    </button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Features Overview Cards -->
+<div class="row g-4 mt-2">
+    <div class="col-md-4">
+        <div class="card glass-card h-100 p-4 border-0 text-center">
+            <div class="card-icon-container mb-3">
+                <span class="bg-primary-subtle text-primary p-3 rounded-circle d-inline-block">
+                    <i class="fas fa-tachometer-alt fa-2x"></i>
+                </span>
+            </div>
+            <h5 class="fw-bold">ATS Compatibility Score</h5>
+            <p class="text-muted small">Analyze formatting, formatting quality, keywords, education level and work history mapping against standard ATS benchmarks.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card glass-card h-100 p-4 border-0 text-center">
+            <div class="card-icon-container mb-3">
+                <span class="bg-success-subtle text-success p-3 rounded-circle d-inline-block">
+                    <i class="fas fa-check-double fa-2x"></i>
+                </span>
+            </div>
+            <h5 class="fw-bold">Job Profile Matching</h5>
+            <p class="text-muted small">Instantly compare your skills against a specific job role to discover matching credentials and identify missing technical competencies.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card glass-card h-100 p-4 border-0 text-center">
+            <div class="card-icon-container mb-3">
+                <span class="bg-info-subtle text-info p-3 rounded-circle d-inline-block">
+                    <i class="fas fa-lightbulb fa-2x"></i>
+                </span>
+            </div>
+            <h5 class="fw-bold">AI Improvement Suggestions</h5>
+            <p class="text-muted small">Get expert tips generated by Gemini, focusing on syntax structures, quantifiable results, and soft skill improvements.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

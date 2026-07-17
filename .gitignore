@@ -1,0 +1,19 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Application files
+.env
+database/database.db
+uploads/*
+!uploads/.gitkeep

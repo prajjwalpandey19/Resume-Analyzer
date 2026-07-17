@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Dashboard - {{ analysis.filename }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+    <div>
+        <h2 class="fw-bold"><i class="fas fa-chart-pie text-primary me-2"></i>Analysis Dashboard</h2>
+        <p class="text-muted mb-0">Detailed analysis results for <strong>{{ analysis.filename }}</strong></p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('download_report', analysis_id=analysis.id) }}" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm">
+            <i class="fas fa-file-pdf me-2"></i> Download PDF Report
+        </a>
+        <a href="{{ url_for('home') }}" class="btn btn-outline-primary fw-bold px-4 py-2 rounded-pill">
+            <i class="fas fa-redo me-2"></i> Analyze New
+        </a>
+    </div>
+</div>
+
+<!-- Score Circles Block -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+            <div class="score-circle" data-score="{{ analysis.ats_score }}">
+                <svg>
+                    <circle class="bg-ring" cx="75" cy="75" r="60"></circle>
+                    <circle class="progress-ring" cx="75" cy="75" r="60"></circle>
+                </svg>
+                <div class="score-text">{{ analysis.ats_score }}</div>
+                <div class="score-label">ATS Score</div>
+            </div>
+            <div class="mt-4 pt-2">
+                <span class="text-muted small">Overall score based on parsing completeness & formatting</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card glass-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+            {% set match_pct = analysis.match_percentage or 0 %}
+            <div class="score-circle" data-score="{{ match_pct }}">
+                <svg>
+                    <circle class="bg-ring" cx="75" cy="75" r="60"></circle>
+                    <circle class="progress-ring" cx="75" cy="75" r="60"></circle>
+                </svg>
+                <div class="score-text">{% if match_pct > 0 %}{{ match_pct }}%{% else %}N/A{% endif %}</div>
+                <div class="score-label">Job Match</div>
+            </div>
+            <div class="mt-4 pt-2">
+                <span class="text-muted small">
+                    {% if match_pct > 0 %}
+                    Match match percentage with job description
+                    {% else %}
+                    No Job Description provided for comparison
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ATS Breakdown Progress Bars -->
+    <div class="col-lg-6">
+        <div class="card glass-card p-4 h-100">
+            <h5 class="fw-bold mb-4"><i class="fas fa-tasks text-primary me-2"></i>ATS Score Breakdown</h5>
+            {% set breakdown = data.ats_breakdown or {} %}
+            
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small fw-semibold">Formatting & Structure</span>
+                    <span class="small fw-bold">{{ breakdown.formatting or 0 }}%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ breakdown.formatting or 0 }}%" aria-valuenow="{{ breakdown.formatting or 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small fw-semibold">Keyword Optimization</span>
+                    <span class="small fw-bold">{{ breakdown.keywords or 0 }}%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ breakdown.keywords or 0 }}%" aria-valuenow="{{ breakdown.keywords or 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small fw-semibold">Skills Coverage</span>
+                    <span class="small fw-bold">{{ breakdown.skills or 0 }}%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ breakdown.skills or 0 }}%" aria-valuenow="{{ breakdown.skills or 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small fw-semibold">Work History Mapping</span>
+                    <span class="small fw-bold">{{ breakdown.experience or 0 }}%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ breakdown.experience or 0 }}%" aria-valuenow="{{ breakdown.experience or 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Resume Summary -->
+    <div class="col-12">
+        <div class="card glass-card p-4">
+            <h5 class="fw-bold mb-3"><i class="fas fa-quote-left text-primary me-2"></i>Professional Resume Summary</h5>
+            <p class="lead fs-6 text-muted mb-0" style="line-height: 1.6;">{{ analysis.resume_summary }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Skills Extraction -->
+    <div class="col-md-7">
+        <div class="card glass-card p-4 h-100">
+            <h5 class="fw-bold mb-4"><i class="fas fa-award text-primary me-2"></i>Extracted Skills</h5>
+            {% set ext_skills = data.extracted_data or {} %}
+            {% set tech_skills = ext_skills.technical_skills or [] %}
+            {% set soft_skills = ext_skills.soft_skills or [] %}
+            
+            <div class="mb-4">
+                <h6 class="fw-bold text-primary mb-2">Technical / Hard Skills</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for skill in tech_skills %}
+                        <span class="badge bg-primary-subtle text-primary py-2 px-3 rounded-pill fs-7">{{ skill }}</span>
+                    {% else %}
+                        <span class="text-muted small">No technical skills detected.</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <h6 class="fw-bold text-success mb-2">Soft Skills</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for skill in soft_skills %}
+                        <span class="badge bg-success-subtle text-success py-2 px-3 rounded-pill fs-7">{{ skill }}</span>
+                    {% else %}
+                        <span class="text-muted small">No soft skills detected.</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Distribution Chart -->
+    <div class="col-md-5">
+        <div class="card glass-card p-4 h-100">
+            <h5 class="fw-bold mb-4"><i class="fas fa-chart-bar text-primary me-2"></i>Skills Proportion</h5>
+            <div style="position: relative; height: 220px;">
+                <canvas id="skillsChart" 
+                        data-tech-count="{{ tech_skills|length }}" 
+                        data-soft-count="{{ soft_skills|length }}"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Job Match Details (If Job Description matches available) -->
+{% set job_match = data.job_match or {} %}
+{% set matching = job_match.matching_skills or [] %}
+{% set missing = job_match.missing_skills or [] %}
+{% set recommended = job_match.recommended_skills or [] %}
+
+{% if match_pct > 0 or matching or missing or recommended %}
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="card glass-card p-4 border-primary">
+            <h5 class="fw-bold mb-4 text-primary"><i class="fas fa-compress-alt me-2"></i>Job Description Match Analysis</h5>
+            
+            <div class="row g-4">
+                <!-- Matching Keywords -->
+                <div class="col-md-4">
+                    <div class="p-3 rounded bg-success-subtle h-100">
+                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-check-circle me-2"></i>Matching Keywords ({{ matching|length }})</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in matching %}
+                                <span class="badge bg-success text-white py-1 px-2 rounded">{{ skill }}</span>
+                            {% else %}
+                                <span class="text-muted small">No matching keywords.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Missing Keywords -->
+                <div class="col-md-4">
+                    <div class="p-3 rounded bg-danger-subtle h-100">
+                        <h6 class="fw-bold text-danger mb-3"><i class="fas fa-times-circle me-2"></i>Missing Keywords ({{ missing|length }})</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in missing %}
+                                <span class="badge bg-danger text-white py-1 px-2 rounded">{{ skill }}</span>
+                            {% else %}
+                                <span class="text-success small">No missing keywords detected! Great coverage.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Keywords -->
+                <div class="col-md-4">
+                    <div class="p-3 rounded bg-warning-subtle h-100">
+                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-lightbulb me-2"></i>Recommended to Add ({{ recommended|length }})</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in recommended %}
+                                <span class="badge bg-warning text-dark py-1 px-2 rounded">{{ skill }}</span>
+                            {% else %}
+                                <span class="text-muted small">No recommendation adjustments needed.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Evaluation: Strengths, Weaknesses, Improvements -->
+{% set analysis_eval = data.analysis or {} %}
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card glass-card p-4 h-100 border-start border-4 border-success">
+            <h5 class="fw-bold text-success mb-3"><i class="fas fa-thumbs-up me-2"></i>Strengths</h5>
+            <ul class="list-group list-group-flush bg-transparent">
+                {% for strength in analysis_eval.strengths or [] %}
+                    <li class="list-group-item bg-transparent border-0 px-0 text-muted d-flex align-items-start">
+                        <i class="fas fa-check text-success mt-1 me-3"></i>
+                        <span>{{ strength }}</span>
+                    </li>
+                {% else %}
+                    <li class="text-muted small px-0">No strengths explicitly evaluated.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card glass-card p-4 h-100 border-start border-4 border-danger">
+            <h5 class="fw-bold text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Weaknesses / Gaps</h5>
+            <ul class="list-group list-group-flush bg-transparent">
+                {% for weakness in analysis_eval.weaknesses or [] %}
+                    <li class="list-group-item bg-transparent border-0 px-0 text-muted d-flex align-items-start">
+                        <i class="fas fa-times text-danger mt-1 me-3"></i>
+                        <span>{{ weakness }}</span>
+                    </li>
+                {% else %}
+                    <li class="text-muted small px-0">No obvious weaknesses found. Excellent!</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card glass-card p-4 h-100 border-start border-4 border-primary">
+            <h5 class="fw-bold text-primary mb-3"><i class="fas fa-magic me-2"></i>Suggestions to Improve</h5>
+            <ul class="list-group list-group-flush bg-transparent">
+                {% for imp in analysis_eval.improvements or [] %}
+                    <li class="list-group-item bg-transparent border-0 px-0 text-muted d-flex align-items-start">
+                        <i class="fas fa-arrow-right text-primary mt-1 me-3"></i>
+                        <span>{{ imp }}</span>
+                    </li>
+                {% else %}
+                    <li class="text-muted small px-0">No suggestions needed. Keep it as is!</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Career Profile: Experience & Education -->
+<div class="row g-4 mb-5">
+    <!-- Work Experience -->
+    <div class="col-md-6">
+        <div class="card glass-card p-4 h-100">
+            <h5 class="fw-bold mb-4"><i class="fas fa-briefcase text-primary me-2"></i>Extracted Work Experience</h5>
+            <div class="timeline border-start border-2 border-primary-subtle ps-4 ms-2 position-relative">
+                {% for exp in ext_skills.work_experience or [] %}
+                    <div class="timeline-item mb-4 position-relative">
+                        <div class="position-absolute bg-primary rounded-circle" style="width: 12px; height: 12px; left: -31px; top: 6px;"></div>
+                        <h6 class="fw-bold mb-1">{{ exp.role or 'N/A' }}</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-primary small fw-semibold">{{ exp.company or 'N/A' }}</span>
+                            <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i> {{ exp.duration or 'N/A' }}</span>
+                        </div>
+                        <p class="text-muted small mb-0">{{ exp.description or '' }}</p>
+                    </div>
+                {% else %}
+                    <p class="text-muted small">No work experience entries extracted.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Education -->
+    <div class="col-md-6">
+        <div class="card glass-card p-4 h-100">
+            <h5 class="fw-bold mb-4"><i class="fas fa-graduation-cap text-primary me-2"></i>Extracted Education</h5>
+            <div class="timeline border-start border-2 border-success-subtle ps-4 ms-2 position-relative">
+                {% for edu in ext_skills.education or [] %}
+                    <div class="timeline-item mb-4 position-relative">
+                        <div class="position-absolute bg-success rounded-circle" style="width: 12px; height: 12px; left: -31px; top: 6px;"></div>
+                        <h6 class="fw-bold mb-1">{{ edu.degree or 'N/A' }}</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-success small fw-semibold">{{ edu.institution or 'N/A' }}</span>
+                            <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i> {{ edu.year or 'N/A' }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted small">No education history extracted.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Keyword Highlighting inside Raw Text -->
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="card glass-card p-4">
+            <h5 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-file-alt text-primary me-2"></i>Extracted Resume Text <span class="small fw-normal text-muted">(with keyword highlighting)</span></span>
+                <span class="badge bg-success-subtle text-success fs-7">Auto Highlighted</span>
+            </h5>
+            
+            {% set highlight_list = matching + tech_skills %}
+            <div class="highlight-container" id="resumeRawText" data-matching='{{ highlight_list|tojson }}'>{{ raw_resume_text }}</div>
+            
+            <div class="mt-2 text-muted small">
+                <i class="fas fa-info-circle me-1"></i> Highlights indicate matching technical skills or job description keywords discovered in the parser.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
